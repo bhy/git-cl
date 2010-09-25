@@ -228,10 +228,13 @@ class Changelist:
                                error_ok=True).strip()
       if upstream_branch:
         remote = RunGit(['config', 'branch.%s.remote' % branch]).strip()
-        # We have remote=origin and branch=refs/heads/foobar; convert to
-        # refs/remotes/origin/foobar.
-        self.upstream_branch = upstream_branch.replace('heads',
-                                                       'remotes/' + remote)
+        if remote != '.':
+          # If we are not tracking a local branch
+          # We have remote=origin and branch=refs/heads/foobar; convert to
+          # refs/remotes/origin/foobar.
+          upstream_branch = upstream_branch.replace('heads',
+                                                    'remotes/' + remote)
+        self.upstream_branch = upstream_branch
 
       if not self.upstream_branch:
         # Fall back on trying a git-svn upstream branch.
